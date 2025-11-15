@@ -77,7 +77,14 @@ router.post('/', async (req, res, next) => {
 router.patch('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { name, description, prompt_template: promptTemplate, model, isActive } = req.body;
+      let { name, description, prompt_template: promptTemplate, model, isActive } = req.body;
+      
+      // Validate workflowId is an integer
+      if (!Number.isInteger(parseInt(id))) {
+          return res.status(400).json({
+              error: 'workflowId must be an integer'
+          });
+      }
 
     // Validate template placeholder if provided
     if (promptTemplate && !promptTemplate.includes('{{text}}')) {
@@ -87,14 +94,14 @@ router.patch('/:id', async (req, res, next) => {
     }
 
     // Validate name length if provided
-    if (name && name.length < 3) {
+    if (name && (typeof name !== 'string' || name.length < 3)) {
       return res.status(400).json({
-        error: 'Workflow name must be at least 3 characters long'
+        error: 'Workflow name must be a string and at least 3 characters long'
       });
     }
 
     const workflow = await WorkflowService.updateWorkflowById(id, {
-      name: name ? name.toLowerCase() : undefined,
+      name: name.toLowerCase() ? name : name,
       description,
       promptTemplate,
       model,

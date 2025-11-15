@@ -17,6 +17,13 @@ router.post('/run', async (req, res, next) => {
       });
     }
 
+    // Validate workflowId is an integer
+    if (!Number.isInteger(parseInt(workflowId))) {
+      return res.status(400).json({
+        error: 'workflowId must be an integer'
+      });
+    }
+      
     // Check if workflow exists
     const workflow = await WorkflowService.getWorkflow(workflowId);
 
@@ -39,44 +46,62 @@ router.post('/run', async (req, res, next) => {
 
 // GET /workflow/status/:jobId - Check job status
 router.get('/status/:jobId', async (req, res, next) => {
-  try {
-    const status = await JobService.getJobStatus(req.params.jobId);
-    res.json(status);
-  } catch (error) {
-    if (error.message.includes('not found')) {
-      return res.status(404).json({ error: error.message });
+
+    const { jobId } = req.params;
+    if (!jobId) {
+        return res.status(400).json({ error: 'Missing required parameter: jobId' });
     }
-    logger.error('Error in GET /workflow/status:', error.message);
-    next(error);
-  }
+
+    try {
+        const status = await JobService.getJobStatus(jobId);
+        res.json(status);
+    } catch (error) {
+        if (error.message.includes('not found')) {
+            return res.status(404).json({ error: error.message });
+        }
+        logger.error('Error in GET /workflow/status:', error.message);
+        next(error);
+    }
 });
 
 // GET /workflow/result/:jobId - Get job result
 router.get('/result/:jobId', async (req, res, next) => {
-  try {
-    const result = await JobService.getJobResult(req.params.jobId);
-    res.json(result);
-  } catch (error) {
-    if (error.message.includes('not found')) {
-      return res.status(404).json({ error: error.message });
+
+    const { jobId } = req.params;
+    if (!jobId) {
+        return res.status(400).json({ error: 'Missing required parameter: jobId' });
     }
-    logger.error('Error in GET /workflow/result:', error.message);
-    next(error);
-  }
+
+    try {
+        const result = await JobService.getJobResult(jobId);
+        res.json(result);
+    } catch (error) {
+        if (error.message.includes('not found')) {
+            return res.status(404).json({ error: error.message });
+        }
+        logger.error('Error in GET /workflow/result:', error.message);
+        next(error);
+    }
 });
 
 // DELETE /workflow/cancel/:jobId - Cancel a job
 router.delete('/cancel/:jobId', async (req, res, next) => {
-  try {
-    const cancelled = await JobService.cancelJobById(req.params.jobId);
-    res.json({ message: 'Job cancelled successfully', ...cancelled });
-  } catch (error) {
-    if (error.message.includes('not found')) {
-      return res.status(404).json({ error: error.message });
+
+    const { jobId } = req.params;
+    if (!jobId) {
+        return res.status(400).json({ error: 'Missing required parameter: jobId' });
     }
-    logger.error('Error in DELETE /workflow/cancel:', error.message);
-    next(error);
-  }
+
+    try {
+        const cancelled = await JobService.cancelJobById(req.params.jobId);
+        res.json({ message: 'Job cancelled successfully', ...cancelled });
+    } catch (error) {
+        if (error.message.includes('not found')) {
+            return res.status(404).json({ error: error.message });
+        }
+        logger.error('Error in DELETE /workflow/cancel:', error.message);
+        next(error);
+    }
 });
 
 // GET /workflow/jobs - Get all jobs (debug endpoint)

@@ -72,30 +72,7 @@ services:
       - llm-network
     restart: unless-stopped
 
-  # Worker
-  worker:
-    build: .
-    container_name: llm-worker
-    environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - OLLAMA_URL=http://ollama:11434/api/generate
-      - OLLAMA_MODEL=llama3.2:1b
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5432
-      - POSTGRES_USER=llmuser
-      - POSTGRES_PASSWORD=llmpassword
-      - POSTGRES_DB=llmworkflow
-    volumes:
-      - ./src:/app/src
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    networks:
-      - llm-network
-    restart: unless-stopped
+  
 
 networks:
   llm-network:

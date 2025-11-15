@@ -15,4 +15,4 @@ COPY src .
 EXPOSE 3000
 
 # Default command (can be overridden in docker-compose)
-CMD ["node", "src/index.js"]
+CMD ["node", "src/server.js"]
