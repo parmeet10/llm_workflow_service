@@ -9,10 +9,10 @@ COPY package*.json ./
 RUN npm install
 
 # Copy source code
-COPY src ./src
+COPY src .
 
 # Expose API port
 EXPOSE 3000
 
 # Default command (can be overridden in docker-compose)
-CMD ["node", "src/index.js"]
+CMD ["node", "src/server.js"]

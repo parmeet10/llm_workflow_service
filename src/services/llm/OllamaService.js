@@ -1,3 +1,5 @@
+import { logger } from '../../utils/logger.js';
+
 export async function callOllama(prompt) {
   try {
     const ollamaUrl = process.env.OLLAMA_URL || 'http://ollama:11434/api/generate';
@@ -11,7 +13,11 @@ export async function callOllama(prompt) {
 
     const text = await res.text();
     let data = null;
-    try { data = JSON.parse(text); } catch (e) { /* not JSON */ }
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      /* not JSON */
+    }
 
     if (!res.ok) {
       const body = data ? JSON.stringify(data) : text;
@@ -21,7 +27,9 @@ export async function callOllama(prompt) {
     // Ollama may return different shapes; prefer `response` field if present
     return data?.response ?? data;
   } catch (error) {
-    console.error('Ollama error:', error);
+    logger.error('Ollama error:', error.message);
     throw error;
   }
 }
+
+export default { callOllama };
