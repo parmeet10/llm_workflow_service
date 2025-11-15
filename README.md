@@ -20,7 +20,7 @@ A robust and scalable service for managing and executing LLM (Large Language Mod
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/parmeet10/llm_workflow_service.git
 cd llm_workflow_service
 ```
 
@@ -142,5 +142,210 @@ The application is containerized using Docker. To deploy:
 | `OLLAMA_BASE_URL` | URL for Ollama service | `http://ollama:11434` |
 
 
+
+## API Examples
+
+### Get All Tools
+
+```bash
+curl --location 'http://localhost:3000/tools'
+```
+
+**Response:**
+
+```json
+{
+    "workflows": [
+        {
+            "id": 2,
+            "name": "sentiment",
+            "description": "Analyze sentiment of text (positive, negative, neutral)",
+            "prompt_template": "Analyze sentiment of the following text. Respond with positive, negative, or neutral.\n\nText: {{text}}\n\nSentiment:",
+            "model": "llama3.2:1b",
+            "is_active": true,
+            "created_at": "2025-11-15T22:57:03.926Z"
+        },
+        {
+            "id": 1,
+            "name": "summarize",
+            "description": "Summarize text into 2-3 concise sentences",
+            "prompt_template": "Summarize the following text in 2-3 concise sentences:\n\n{{text}}\n\nSummary:",
+            "model": "llama3.2:1b",
+            "is_active": true,
+            "created_at": "2025-11-15T22:57:03.925Z"
+        }
+    ],
+    "count": 2
+}
+```
+
+### Update a Tool
+
+```bash
+curl --location --request PATCH 'http://localhost:3000/tools/1' \
+--header 'Content-Type: application/json' \
+--data '{
+    "name": "translate_hindi",
+    "description": "Translate the given text into hindi.",
+    "promptTemplate": "Translate the following text into hindi:\n\n{{text}}\n\nTranslation:"
+}'
+```
+
+**Response:**
+
+```json
+{
+    "workflow": {
+        "id": 1,
+        "name": "translate_hindi",
+        "description": "Translate the given text into hindi.",
+        "prompt_template": "Summarize the following text in 2-3 concise sentences:\n\n{{text}}\n\nSummary:",
+        "model": "llama3.2:1b",
+        "is_active": true,
+        "created_at": "2025-11-15T21:51:20.212Z"
+    }
+}
+```
+
+### Create a New Tool
+
+```bash
+curl --location 'http://localhost:3000/tools' \
+--header 'Content-Type: application/json' \
+--data '{
+  "name": "translate_du",
+  "description": "Translate the given text into German.",
+  "prompt_template": "Translate the following text into German:\n\n{{text}}\n\nTranslation:"
+}'
+```
+
+**Response:**
+
+```json
+{
+    "workflow": {
+        "id": 21,
+        "name": "translate_du",
+        "description": "Translate the given text into German.",
+        "prompt_template": "Translate the following text into German:\n\n{{text}}\n\nTranslation:",
+        "model": "llama3.2:1b",
+        "is_active": true,
+        "created_at": "2025-11-15T21:45:58.068Z"
+    }
+}
+```
+
+### Execute a Workflow
+
+```bash
+curl --location 'http://localhost:3000/workflow/run' \
+--header 'Content-Type: application/json' \
+--data '{
+    "text": "Parmeet is the kind of person who shows up with consistency, depth, and heart—a rare combination that's becoming increasingly hard to find.",
+    "workflowId": 2
+}'
+```
+
+**Response:**
+
+```json
+{
+    "jobId": "30f7bf32-73d3-4fe6-9c88-7b6f02066e8e"
+}
+```
+
+### Check Job Status
+
+```bash
+curl --location 'http://localhost:3000/workflow/status/30f7bf32-73d3-4fe6-9c88-7b6f02066e8e'
+```
+
+**Response:**
+
+```json
+{
+    "jobId": "30f7bf32-73d3-4fe6-9c88-7b6f02066e8e",
+    "status": "completed"
+}
+```
+
+### Get Job Result
+
+```bash
+curl --location 'http://localhost:3000/workflow/result/30f7bf32-73d3-4fe6-9c88-7b6f02066e8e'
+```
+
+**Response:**
+
+```json
+{
+    "jobId": "30f7bf32-73d3-4fe6-9c88-7b6f02066e8e",
+    "status": "completed",
+    "result": "The sentiment of the text is neutral. The language used is straightforward and objective, describing a characteristic (consistency, depth, and heart) without expressing a positive or negative emotion.",
+    "workflowId": 2,
+    "inputText": "Parmeet is the kind of person who shows up with consistency, depth, and heart—a rare combination that's becoming increasingly hard to find.",
+    "createdAt": "2025-11-15T23:11:37.916Z",
+    "completedAt": "2025-11-15T23:11:53.306Z"
+}
+```
+
+### Get All Jobs
+
+```bash
+curl --location 'http://localhost:3000/workflow/jobs'
+```
+
+**Response:**
+
+```json
+{
+    "jobs": [
+        {
+            "job_id": "30f7bf32-73d3-4fe6-9c88-7b6f02066e8e",
+            "input_text": "Parmeet is the kind of person who shows up with consistency, depth, and heart—a rare combination that's becoming increasingly hard to find. ",
+            "workflow_id": 2,
+            "status": "completed",
+            "result": "The sentiment of the text is neutral. The language used is straightforward and objective, describing a characteristic (consistency, depth, and heart) without expressing a positive or negative emotion.",
+            "created_at": "2025-11-15T23:11:37.916Z",
+            "completed_at": "2025-11-15T23:11:53.306Z"
+        },
+        {
+            "job_id": "401418e2-ffb6-43ed-9e4e-e2f6c82d83b2",
+            "input_text": "Parmeet is the kind of person who shows up with consistency, depth, and heart—a rare combination that's becoming increasingly hard to find. [truncated for brevity]",
+            "workflow_id": 1,
+            "status": "completed",
+            "result": "Here is a 2-3 sentence summary of the text:\n\nParmeet is a rare individual who possesses consistency, depth, and heart, demonstrating a calm, grounded confidence that inspires others with his quiet discipline and steady growth. [truncated]",
+            "created_at": "2025-11-15T22:59:40.648Z",
+            "completed_at": "2025-11-15T22:59:54.560Z"
+        },
+        {
+            "job_id": "1c0c2ec7-7860-450a-a1c4-6d369b8f6c1a",
+            "input_text": "Parmeet is the kind of person who shows up with consistency, depth, and heart—a rare combination. [truncated]",
+            "workflow_id": 1,
+            "status": "completed",
+            "result": "Parmeet is a person known for being consistent, genuine, hardworking, and confident. [truncated]",
+            "created_at": "2025-11-15T22:57:28.152Z",
+            "completed_at": "2025-11-15T22:57:43.546Z"
+        }
+    ],
+    "count": 3
+}
+```
+
+#### Canceling a Job
+
+
+```bash
+curl --location --request DELETE 'http://localhost:3000/workflow/cancel/68beb048-c67a-4d17-97c3-1631e7200207'
+```
+
+**Successful Response (200 OK):**
+```json
+{
+  "message": "Job cancelled successfully",
+  "id": "68beb048-c67a-4d17-97c3-1631e7200207",
+  "status": "cancelled"
+}
+```
 
 *This project was created by Parmeet Singh*
