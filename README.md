@@ -8,6 +8,7 @@ A robust and scalable service for managing and executing LLM (Large Language Mod
 - **Job Processing**: Asynchronous job processing with BullMQ and Redis
 - **Scalable Architecture**: Built with microservices in mind using Docker
 - **Database Integration**: PostgreSQL for persistent storage
+- **API Documentation**: [Postman Collection](https://cloudy-meadow-851273.postman.co/workspace/My-Workspace~a24ce848-883a-40cb-886e-d130a8287003/collection/18466194-ff1eb78a-e1bd-45ab-8989-e72096782f87?action=share&creator=18466194) for easy API testing and integration
 - **LLM Integration**: Supports Ollama for local LLM inference
 - **RESTful API**: Well-documented endpoints for easy integration
 
