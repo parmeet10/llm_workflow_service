@@ -48,7 +48,7 @@ services:
   api:
     build: .
     container_name: llm-api
-    command: node src/index.js
+    command: node src/server.js
     ports:
       - "3000:3000"
     environment:
@@ -76,7 +76,6 @@ services:
   worker:
     build: .
     container_name: llm-worker
-    command: node src/worker.js
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379

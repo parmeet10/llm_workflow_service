@@ -9,7 +9,7 @@ COPY package*.json ./
 RUN npm install
 
 # Copy source code
-COPY src ./src
+COPY src .
 
 # Expose API port
 EXPOSE 3000
