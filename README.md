@@ -12,6 +12,9 @@ A robust and scalable service for managing and executing LLM (Large Language Mod
 - **LLM Integration**: Supports Ollama for local LLM inference
 - **RESTful API**: Well-documented endpoints for easy integration
 
+## Video Reference
+[Link For Video](https://github.com/parmeet10/llm_workflow_service/releases/tag/video_0.1)
+
 ## Prerequisites
 
 - Docker and Docker Compose
